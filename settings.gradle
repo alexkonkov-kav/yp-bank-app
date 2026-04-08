@@ -1,0 +1,8 @@
+rootProject.name = 'yp-bank-app'
+include 'gateway-service'
+include 'front-app'
+include 'account-app'
+include 'cash-app'
+include 'transfer-app'
+include 'notification-app'
+
