@@ -1,0 +1,217 @@
+{
+  "realm": "bank-realm",
+  "enabled": true,
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "accessTokenLifespan": 3600,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+
+  "roles": {
+    "realm": [
+      {
+        "name": "USER",
+        "description": "Regular bank user",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "SERVICE",
+        "description": "Generic service role for microservices",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "ACCOUNT_WRITE",
+        "description": "Permission to write to accounts",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "CASH_WRITE",
+        "description": "Permission to perform cash",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "TRANSFER_WRITE",
+        "description": "Permission to perform transfers",
+        "composite": false,
+        "clientRole": false
+      }
+
+    ]
+  },
+
+  "clients": [
+    {
+      "clientId": "front-app",
+      "name": "Bank UI",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "front-app-secret",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:8081/login/oauth2/code/*"
+      ],
+      "baseUrl": "http://localhost:8081",
+      "webOrigins": [
+        "http://localhost:8081"
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "role_list",
+        "profile",
+        "roles"
+      ],
+      "optionalClientScopes": []
+    },
+    {
+      "clientId": "account-app",
+      "name": "Account Service",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "account-app-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "cash-app",
+      "name": "Cash Service",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "cash-app-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "transfer-app",
+      "name": "Transfer Service",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "transfer-app-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "notification-app",
+      "name": "Notification Service",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "notification-app-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    }
+  ],
+
+  "users": [
+    {
+      "username": "user1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Иван",
+      "lastName": "Иванов",
+      "email": "test1-user@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user1",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "USER",
+        "ACCOUNT_WRITE",
+        "CASH_WRITE",
+        "TRANSFER_WRITE"
+      ]
+    },
+    {
+      "username": "user2",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Петр",
+      "lastName": "Петров",
+      "email": "test2-user@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user2",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "USER",
+        "ACCOUNT_WRITE",
+        "CASH_WRITE",
+        "TRANSFER_WRITE"
+      ]
+    },
+    {
+      "username": "user3",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Сергей",
+      "lastName": "Сидоров",
+      "email": "test3-user@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user3",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "USER",
+        "ACCOUNT_WRITE",
+        "CASH_WRITE",
+        "TRANSFER_WRITE"
+      ]
+    },
+    {
+      "username": "account-service",
+      "enabled": true,
+      "serviceAccountClientId": "account-app",
+      "realmRoles": [
+        "SERVICE",
+        "ACCOUNT_WRITE",
+        "NOTIFICATION_WRITE"
+      ]
+    },
+    {
+      "username": "cash-service",
+      "enabled": true,
+      "serviceAccountClientId": "cash-app",
+      "realmRoles": [
+        "SERVICE",
+        "CASH_WRITE",
+        "ACCOUNT_WRITE",
+        "NOTIFICATION_WRITE"
+      ]
+    },
+    {
+      "username": "transfer-service",
+      "enabled": true,
+      "serviceAccountClientId": "transfer-app",
+      "realmRoles": [
+        "SERVICE",
+        "TRANSFER_WRITE",
+        "ACCOUNT_WRITE",
+        "NOTIFICATION_WRITE"
+      ]
+    }
+  ]
+}
