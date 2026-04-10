@@ -1,0 +1,17 @@
+spring:
+  liquibase:
+    enabled: false
+
+  main:
+    allow-bean-definition-overriding: true
+
+bank:
+  account-gateway:
+    base-url: http://localhost:8091/accounts
+  notification-gateway:
+    base-url: http://localhost:8092/notification
+
+logging:
+  level:
+    org.springframework.cloud.contract.stubrunner: DEBUG
+    com.github.tomakehurst.wiremock: DEBUG
