@@ -1,0 +1,32 @@
+plugins {
+    id "maven-publish"
+    id "org.springframework.cloud.contract" version "4.3.0"
+}
+
+
+dependencies {
+    testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}
+
+contracts {
+    baseClassForTests.set(
+            "com.bank.notificationapp.contracts.BaseNotificationContractTest"
+    )
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = "com.bank"
+            artifactId = "notification"
+            version = "0.0.1-SNAPSHOT"
+
+            from components.java
+            artifact tasks.named("verifierStubsJar")
+        }
+    }
+}
+
+tasks.withType(GenerateModuleMetadata) {
+    suppressedValidationErrors.add("dependencies-without-versions")
+}
