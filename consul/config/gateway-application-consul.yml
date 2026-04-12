@@ -1,0 +1,61 @@
+server:
+  port: 8086
+
+spring:
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true
+        register: true
+        prefer-ip-address: true
+      config:
+        enabled: true
+        prefixes:
+          - config
+        default-context: application
+        format: YAML
+    gateway:
+      default-filters:
+        - JwtTokenRelay
+      routes:
+        #Account
+        - id: account-app
+          uri: http://localhost:8082
+          predicates:
+            - Path=/accounts/**
+
+        #Cash
+        - id: cash-app
+          uri: http://localhost:8083
+          predicates:
+            - Path=/cash/**
+
+        #Transfer
+        - id: transfer-app
+          uri: http://localhost:8084
+          predicates:
+            - Path=/transfer/**
+
+        #Notification
+        - id: notification-app
+          uri: http://localhost:8085
+          predicates:
+            - Path=/notification/**
+  config:
+    import: "optional:consul:"
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/bank-realm
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+logging:
+  level:
+    root: INFO

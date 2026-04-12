@@ -1,0 +1,30 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: account-app
+
+  cloud:
+    consul:
+      #host: consul
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true
+        register: true
+        service-name: ${spring.application.name}
+
+      config:
+        enabled: true
+        prefixes:
+         - config
+        default-context: application
+        format: YAML
+
+  config:
+    import: "optional:consul:"
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.consul: DEBUG

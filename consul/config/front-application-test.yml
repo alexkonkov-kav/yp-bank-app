@@ -11,7 +11,7 @@ spring:
     show-sql: false
   sql:
     init:
-      mode: always
+      mode: never
       schema-locations: classpath:schema.sql
   liquibase:
     enabled: false
