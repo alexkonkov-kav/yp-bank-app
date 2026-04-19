@@ -1,0 +1,4 @@
+CREATE SCHEMA IF NOT EXISTS account_schema;
+CREATE SCHEMA IF NOT EXISTS transfer_schema;
+CREATE SCHEMA IF NOT EXISTS cash_schema;
+CREATE SCHEMA IF NOT EXISTS notification_schema;

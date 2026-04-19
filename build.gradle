@@ -22,6 +22,7 @@ configurations {
 
 ext {
     springCloudVersion = "2024.0.1"
+    springCloudContractVersion = "4.1.0"
 }
 
 subprojects {
@@ -51,10 +52,24 @@ def businessServices = subprojects.findAll {
             it.name != 'front-app'
 }
 
+def providerServices = [
+        project(':account-app'),
+        project(':notification-app')
+]
+
+def consumerServices = [
+        project(':transfer-app'),
+        project(':account-app'),
+        project(':cash-app')
+]
+
 configure(businessServices) {
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+        implementation 'org.springframework.cloud:spring-cloud-starter-consul-discovery'
         implementation 'org.springframework.cloud:spring-cloud-starter-consul-config'
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
         implementation 'org.liquibase:liquibase-core'

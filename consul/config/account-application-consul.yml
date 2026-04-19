@@ -1,0 +1,72 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:bank_db}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:qwerty}
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/master.xml
+    default-schema: ${ACCOUNT_DB_SCHEMA:account_schema}
+
+  jpa:
+    properties:
+      hibernate:
+        default_schema: ${ACCOUNT_DB_SCHEMA:account_schema}
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/bank-realm
+      client:
+        registration:
+          account-app:
+            provider: keycloak
+            client-id: account-app
+            client-secret: account-app-secret
+            authorization-grant-type: client_credentials
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/bank-realm
+
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true
+        register: true
+        service-name: account-app
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+        prefer-ip-address: true
+
+      config:
+        enabled: true
+        prefixes:
+         - config
+        default-context: application
+        format: YAML
+  config:
+    import: "optional:consul:"
+
+bank:
+  notification-gateway:
+    base-url: http://localhost:8086/notification
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.consul: DEBUG
