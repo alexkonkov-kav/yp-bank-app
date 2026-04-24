@@ -4,27 +4,31 @@ server:
 spring:
   application:
     name: front-app
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            provider: keycloak
+            client-id: front-app
+            client-secret: front-app-secret
+            authorization-grant-type: authorization_code
+            scope: openid, profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/bank-realm
 
-  cloud:
-    consul:
-      #host: consul
-      host: localhost
-      port: 8500
-      discovery:
-        enabled: true
-        register: true
-        service-name: ${spring.application.name}
+bank:
+  account-gateway:
+    base-url: http://localhost:8086/accounts
+  cash-gateway:
+    base-url: http://localhost:8086/cash
+  transfer-gateway:
+    base-url: http://localhost:8086/transfer
 
-      config:
-        enabled: true
-        prefixes:
-          - config
-        default-context: application
-        format: YAML
-
-  config:
-    import: "optional:consul:"
-logging:
-  level:
-    root: INFO
-    org.springframework.cloud.consul: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

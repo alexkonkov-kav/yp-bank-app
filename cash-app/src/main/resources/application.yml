@@ -4,26 +4,51 @@ server:
 spring:
   application:
     name: cash-app
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:bank_db}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:qwerty}
 
-  cloud:
-    consul:
-      #host: consul
-      host: localhost
-      port: 8500
-      discovery:
-        enabled: true
-        register: true
-        service-name: ${spring.application.name}
+  liquibase:
+    enabled: true
+    change-log: classpath:db/master.xml
+    default-schema: ${CASH_DB_SCHEMA:cash_schema}
 
-      config:
-        enabled: true
-        prefixes:
-         - config
-        default-context: application
-        format: YAML
+  jpa:
+    properties:
+      hibernate:
+        default_schema: ${CASH_DB_SCHEMA:cash_schema}
+    show-sql: true
+    hibernate:
+      ddl-auto: none
 
-  config:
-    import: "optional:consul:"
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/bank-realm
+      client:
+        registration:
+          cash-app:
+            provider: keycloak
+            client-id: cash-app
+            client-secret: cash-app-secret
+            authorization-grant-type: client_credentials
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/bank-realm
+
+bank:
+  account-gateway:
+    base-url: http://localhost:8086/accounts
+  notification-gateway:
+    base-url: http://localhost:8086/notification
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 logging:
   level:
     root: INFO

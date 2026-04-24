@@ -6,6 +6,7 @@ plugins {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    runtimeOnly("org.postgresql:postgresql:42.7.2")
     testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
     testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
     testImplementation 'com.h2database:h2'
@@ -34,4 +35,7 @@ publishing {
 
 tasks.withType(GenerateModuleMetadata) {
     suppressedValidationErrors.add("dependencies-without-versions")
+}
+tasks.named('bootJar') {
+    archiveFileName = 'account-app-0.0.1.jar'
 }

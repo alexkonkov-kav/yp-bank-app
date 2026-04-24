@@ -4,26 +4,51 @@ server:
 spring:
   application:
     name: transfer-app
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:bank_db}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:qwerty}
 
-  cloud:
-    consul:
-      #host: consul
-      host: localhost
-      port: 8500
-      discovery:
-        enabled: true
-        register: true
-        service-name: ${spring.application.name}
+  liquibase:
+    enabled: true
+    change-log: classpath:db/master.xml
+    default-schema: ${TRANSFER_DB_SCHEMA:transfer_schema}
 
-      config:
-        enabled: true
-        prefixes:
-          - config
-        default-context: application
-        format: YAML
-  config:
-    import: "optional:consul:"
+  jpa:
+    properties:
+      hibernate:
+        default_schema: ${TRANSFER_DB_SCHEMA:transfer_schema}
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/bank-realm
+      client:
+        registration:
+          transfer-app:
+            provider: keycloak
+            client-id: transfer-app
+            client-secret: transfer-app-secret
+            authorization-grant-type: client_credentials
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/bank-realm
+
+bank:
+  account-gateway:
+    base-url: http://localhost:8086/accounts
+  notification-gateway:
+    base-url: http://localhost:8086/notification
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 logging:
   level:
     root: INFO
-    org.springframework.cloud.consul: DEBUG

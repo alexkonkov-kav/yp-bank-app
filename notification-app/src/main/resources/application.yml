@@ -5,25 +5,32 @@ spring:
   application:
     name: notification-app
 
-  cloud:
-    consul:
-      #host: consul
-      host: localhost
-      port: 8500
-      discovery:
-        enabled: true
-        register: true
-        service-name: ${spring.application.name}
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:bank_db}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:qwerty}
 
-      config:
-        enabled: true
-        prefixes:
-          - config
-        default-context: application
-        format: YAML
-  config:
-    import: "optional:consul:"
+  liquibase:
+    enabled: true
+    change-log: classpath:db/master.xml
+    default-schema: ${NOTIFICATION_DB_SCHEMA:notification_schema}
+
+  jpa:
+    properties:
+      hibernate:
+        default_schema: ${NOTIFICATION_DB_SCHEMA:notification_schema}
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/bank-realm
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 logging:
   level:
     root: INFO
-    org.springframework.cloud.consul: DEBUG
