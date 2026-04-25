@@ -17,7 +17,8 @@ spring:
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
         provider:
           keycloak:
-            issuer-uri: http://localhost:8080/realms/bank-realm
+            issuer-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/bank-realm}
+            #issuer-uri: http://host.docker.internal:8080/realms/bank-realm
 
 bank:
   account-gateway:
