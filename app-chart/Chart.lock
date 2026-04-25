@@ -1,0 +1,18 @@
+dependencies:
+- name: postgres-chart
+  repository: ""
+  version: 0.1.0
+- name: account-chart
+  repository: file://charts/account-chart
+  version: 0.1.0
+- name: cash-chart
+  repository: file://charts/cash-chart
+  version: 0.1.0
+- name: notification-chart
+  repository: file://charts/notification-chart
+  version: 0.1.0
+- name: transfer-chart
+  repository: file://charts/transfer-chart
+  version: 0.1.0
+digest: sha256:ca8f8080a789a59341424dadbb329bc9cbef68e7fc907626388e8140985052cb
+generated: "2026-04-24T23:37:13.9502873+03:00"
