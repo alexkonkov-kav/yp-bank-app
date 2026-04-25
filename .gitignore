@@ -39,5 +39,8 @@ bin/
 ### VS Code ###
 .vscode/
 
+### Helm chart ###
+app-chart/charts/*.tgz
+
 ### Mac OS ###
 .DS_Store
