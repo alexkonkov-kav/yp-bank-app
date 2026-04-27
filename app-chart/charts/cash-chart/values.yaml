@@ -1,0 +1,119 @@
+# Default values for cash-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+replicaCount: 1
+
+image:
+  repository: yp-bank-app-cash-app
+  pullPolicy: IfNotPresent
+  tag: "latest"
+nameOverride: "cash-app"
+fullnameOverride: "cash-app"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+service:
+  type: NodePort
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+httpRoute:
+  # HTTPRoute enabled.
+  enabled: false
+  # HTTPRoute annotations.
+  annotations: {}
+  # Which Gateways this Route is attached to.
+  parentRefs:
+    - name: gateway
+      sectionName: http
+      # namespace: default
+  # Hostnames matching HTTP header.
+  hostnames:
+    - chart-example.local
+  # List of rules and filters applied.
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /headers
+
+resources:
+  limits:
+    memory: 1Gi
+  requests:
+    memory: 512Mi
+
+livenessProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8082
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8082
+  initialDelaySeconds: 10
+  periodSeconds: 5
+
+# This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+config:
+  serverPort: 80
+  managementPort: 8082
+  datasourceUrl: "jdbc:postgresql://postgres:5432/bank_db?currentSchema=cash_schema"
+  schema: "cash_schema"
+  gatewayUrl: "http://gateway:80"
+  keycloak-issuer-uri: "http://host.docker.internal:8080/realms/bank-realm"
+  existingSecret:
+    name: "postgres-secret"
+    usernameKey: "username"
+    passwordKey: "password"
+nodePortService:
+  enabled: true
+  port: 30083
+# Additional volumes on the output Deployment definition.
+volumes: []
+  # - name: foo
+  #   secret:
+  #     secretName: mysecret
+#     optional: false
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+  # - name: foo
+  #   mountPath: "/etc/foo"
+#   readOnly: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

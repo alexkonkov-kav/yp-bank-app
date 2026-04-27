@@ -5,25 +5,33 @@ spring:
   application:
     name: notification-app
 
-  cloud:
-    consul:
-      #host: consul
-      host: localhost
-      port: 8500
-      discovery:
-        enabled: true
-        register: true
-        service-name: ${spring.application.name}
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/bank_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:qwerty}
 
-      config:
-        enabled: true
-        prefixes:
-          - config
-        default-context: application
-        format: YAML
-  config:
-    import: "optional:consul:"
+  liquibase:
+    enabled: true
+    change-log: classpath:db/master.xml
+    default-schema: ${NOTIFICATION_DB_SCHEMA:notification_schema}
+
+  jpa:
+    properties:
+      hibernate:
+        default_schema: ${NOTIFICATION_DB_SCHEMA:notification_schema}
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI:http://localhost:8080/realms/bank-realm}
+          #issuer-uri: http://host.docker.internal:8080/realms/bank-realm
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 logging:
   level:
     root: INFO
-    org.springframework.cloud.consul: DEBUG

@@ -4,26 +4,53 @@ server:
 spring:
   application:
     name: cash-app
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/bank_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:qwerty}
 
-  cloud:
-    consul:
-      #host: consul
-      host: localhost
-      port: 8500
-      discovery:
-        enabled: true
-        register: true
-        service-name: ${spring.application.name}
+  liquibase:
+    enabled: true
+    change-log: classpath:db/master.xml
+    default-schema: ${CASH_DB_SCHEMA:cash_schema}
 
-      config:
-        enabled: true
-        prefixes:
-         - config
-        default-context: application
-        format: YAML
+  jpa:
+    properties:
+      hibernate:
+        default_schema: ${CASH_DB_SCHEMA:cash_schema}
+    show-sql: true
+    hibernate:
+      ddl-auto: none
 
-  config:
-    import: "optional:consul:"
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI:http://localhost:8080/realms/bank-realm}
+          #issuer-uri: http://localhost:8080/realms/bank-realm
+      client:
+        registration:
+          cash-app:
+            provider: keycloak
+            client-id: cash-app
+            client-secret: cash-app-secret
+            authorization-grant-type: client_credentials
+        provider:
+          keycloak:
+            issuer-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/bank-realm}
+            #issuer-uri: http://localhost:8080/realms/bank-realm
+
+bank:
+  account-gateway:
+    base-url: http://localhost:8086/accounts
+  notification-gateway:
+    base-url: http://localhost:8086/notification
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 logging:
   level:
     root: INFO

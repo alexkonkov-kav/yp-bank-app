@@ -30,3 +30,6 @@ publishing {
 tasks.withType(GenerateModuleMetadata) {
     suppressedValidationErrors.add("dependencies-without-versions")
 }
+tasks.named('bootJar') {
+    archiveFileName = 'notification-app-0.0.1.jar'
+}

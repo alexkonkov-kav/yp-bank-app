@@ -1,7 +1,5 @@
-FROM eclipse-temurin:21-jdk
-
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-
-COPY build/libs/*.jar app.jar
-
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+COPY build/libs/notification-app-0.0.1.jar app.jar
+EXPOSE 8082
+ENTRYPOINT ["java", "-jar", "app.jar"]
