@@ -1,6 +1,5 @@
 package com.bank.accountapp.service;
 
-import com.bank.accountapp.client.NotificationClient;
 import com.bank.accountapp.dto.account.AccountIdResponseDto;
 import com.bank.accountapp.dto.account.AccountResponseDto;
 import com.bank.accountapp.dto.account.EditAccountRequestDto;
@@ -8,6 +7,7 @@ import com.bank.accountapp.dto.cash.EditCashRequestDto;
 import com.bank.accountapp.dto.notification.EditAccountNotificationRequestDto;
 import com.bank.accountapp.dto.notification.TransferNotificationRequestDto;
 import com.bank.accountapp.dto.transfer.TransferRequestDto;
+import com.bank.accountapp.kafka.producer.NotificationProducer;
 import com.bank.accountapp.mapper.AccountMapper;
 import com.bank.accountapp.model.Account;
 import com.bank.accountapp.repository.AccountRepository;
@@ -24,14 +24,14 @@ import java.util.List;
 public class AccountService {
 
     private final AccountRepository accountRepository;
-    private final NotificationClient notificationClient;
+    private final NotificationProducer notificationProducer;
     private final AccountMapper mapper;
 
     public AccountService(AccountRepository accountRepository,
-                          NotificationClient notificationClient,
+                          NotificationProducer notificationProducer,
                           AccountMapper mapper) {
         this.accountRepository = accountRepository;
-        this.notificationClient = notificationClient;
+        this.notificationProducer = notificationProducer;
         this.mapper = mapper;
     }
 
@@ -77,7 +77,7 @@ public class AccountService {
             account.setBirthDate(requestDto.birthdate());
         }
         Account savedAccount = accountRepository.save(account);
-        notificationClient.sendEditAccountNotification(getEditAccountNotificationRequestDto(username, oldName, oldBirthDate, savedAccount));
+        notificationProducer.sendEditAccountNotification(getEditAccountNotificationRequestDto(username, oldName, oldBirthDate, savedAccount));
 
         return mapper.toAccountResponseDto(savedAccount);
     }
@@ -116,7 +116,7 @@ public class AccountService {
         toAccount.setBalance(toAccount.getBalance().add(amount));
         Account savedFromAccount = accountRepository.save(fromAccount);
         Account savedToAccount = accountRepository.save(toAccount);
-        notificationClient.sendTransferNotification(getTransferNotificationRequestDto(
+        notificationProducer.sendTransferNotification(getTransferNotificationRequestDto(
                 fromAccountOldBalance, toAccountOldBalance,
                 savedFromAccount, savedToAccount, requestDto));
 
