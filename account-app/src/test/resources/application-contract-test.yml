@@ -4,7 +4,3 @@ spring:
 
   main:
     allow-bean-definition-overriding: true
-
-bank:
-  notification-gateway:
-    base-url: http://localhost:8092/notification

@@ -8,5 +8,3 @@ spring:
 bank:
   account-gateway:
     base-url: http://localhost:8091/accounts
-  notification-gateway:
-    base-url: http://localhost:8092/notification
