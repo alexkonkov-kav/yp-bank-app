@@ -1,11 +1,11 @@
 package com.bank.accountapp.service;
 
-import com.bank.accountapp.client.NotificationClient;
 import com.bank.accountapp.dto.account.AccountResponseDto;
 import com.bank.accountapp.dto.account.EditAccountRequestDto;
 import com.bank.accountapp.dto.cash.CashAction;
 import com.bank.accountapp.dto.cash.EditCashRequestDto;
 import com.bank.accountapp.dto.transfer.TransferRequestDto;
+import com.bank.accountapp.kafka.producer.NotificationProducer;
 import com.bank.accountapp.mapper.AccountMapper;
 import com.bank.accountapp.model.Account;
 import com.bank.accountapp.repository.AccountRepository;
@@ -34,7 +34,7 @@ public class AccountServiceTest {
     private AccountRepository accountRepository;
 
     @Mock
-    private NotificationClient notificationClient;
+    private NotificationProducer notificationProducer;
 
     @Mock
     private AccountMapper mapper;
@@ -122,7 +122,7 @@ public class AccountServiceTest {
 
         verify(accountRepository).findByUsername(username);
         verify(accountRepository).save(account);
-        verify(notificationClient).sendEditAccountNotification(any());
+        verify(notificationProducer).sendEditAccountNotification(any());
         verify(mapper).toAccountResponseDto(savedAccount);
     }
 
@@ -179,7 +179,7 @@ public class AccountServiceTest {
         assertThat(toAccount.getBalance()).isEqualByComparingTo("250");
         verify(accountRepository).save(fromAccount);
         verify(accountRepository).save(toAccount);
-        verify(notificationClient).sendTransferNotification(any());
+        verify(notificationProducer).sendTransferNotification(any());
         verify(mapper).toAccountResponseDto(savedFrom);
     }
 }
