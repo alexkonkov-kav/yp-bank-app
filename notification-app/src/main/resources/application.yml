@@ -27,6 +27,13 @@ spring:
           issuer-uri: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI:http://localhost:8080/realms/bank-realm}
           #issuer-uri: http://host.docker.internal:8080/realms/bank-realm
 
+  kafka:
+    bootstrap-servers: kafka-broker-0.kafka-headless.default.svc.cluster.local:9092
+    #bootstrap-servers: localhost:9093
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
 management:
   endpoints:
     web:
