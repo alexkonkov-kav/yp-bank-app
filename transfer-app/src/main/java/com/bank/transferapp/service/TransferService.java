@@ -1,8 +1,8 @@
 package com.bank.transferapp.service;
 
 import com.bank.transferapp.client.AccountClient;
-import com.bank.transferapp.client.NotificationClient;
 import com.bank.transferapp.dto.*;
+import com.bank.transferapp.kafka.producer.NotificationProducer;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -11,12 +11,12 @@ import org.springframework.web.server.ResponseStatusException;
 public class TransferService {
 
     private final AccountClient accountClient;
-    private final NotificationClient notificationClient;
+    private final NotificationProducer notificationProducer;
 
     public TransferService(AccountClient accountClient,
-                           NotificationClient notificationClient) {
+                           NotificationProducer notificationProducer) {
         this.accountClient = accountClient;
-        this.notificationClient = notificationClient;
+        this.notificationProducer = notificationProducer;
     }
 
     public AccountResponseDto transfer(String username, TransferRequestDto requestDto) {
@@ -27,7 +27,7 @@ public class TransferService {
         AccountIdResponseDto toAccountIdDto = accountClient.getAccountIdByUserName(requestDto.getLogin());
         AccountResponseDto accountDto = accountClient.transfer(new AccountsTransferRequestDto(fromAccountIdDto.id(), toAccountIdDto.id(), requestDto.getValue()));
 
-        notificationClient.sendTransferNotification(new NotificationRequestDto(username, fromAccountIdDto.id(), toAccountIdDto.id(), requestDto.getValue()));
+        notificationProducer.sendTransferNotification(new NotificationRequestDto(username, fromAccountIdDto.id(), toAccountIdDto.id(), requestDto.getValue()));
         return accountDto;
     }
 }

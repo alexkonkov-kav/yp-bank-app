@@ -10,6 +10,7 @@ version = '1.0-SNAPSHOT'
 allprojects {
     repositories {
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 
@@ -53,8 +54,7 @@ def businessServices = subprojects.findAll {
 }
 
 def providerServices = [
-        project(':account-app'),
-        project(':notification-app')
+        project(':account-app')
 ]
 
 def consumerServices = [
@@ -71,6 +71,8 @@ configure(businessServices) {
         implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
         implementation 'org.springframework.boot:spring-boot-starter-validation'
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'org.springframework.kafka:spring-kafka'
+
         implementation 'org.liquibase:liquibase-core'
         implementation 'org.postgresql:postgresql'
         compileOnly 'org.projectlombok:lombok'
@@ -80,5 +82,6 @@ configure(businessServices) {
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testImplementation platform('org.junit:junit-bom:5.10.0')
         testImplementation 'org.junit.jupiter:junit-jupiter'
+        testImplementation 'org.springframework.kafka:spring-kafka-test'
     }
 }

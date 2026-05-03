@@ -25,10 +25,10 @@ public class NotificationService {
         );
     }
 
-    public void transferFromAccount(String username, TransferAccountRequestDto requestDto) {
+    public void transferFromAccount(TransferAccountRequestDto requestDto) {
         log.info(
                 "Пользователь [{}]. Сумма перевода [{}]. Перевод со счета аккаунта [{}:{}]:Баланс:[{} -> {}] - пользователю [{}:{}]:Баланс:[{} -> {}]. Сервис Account.",
-                username,
+                requestDto.fromUsername(),
                 requestDto.amount().toString(),
                 requestDto.fromUsername(),
                 requestDto.fromName(),

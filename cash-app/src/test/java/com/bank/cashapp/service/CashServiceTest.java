@@ -1,8 +1,8 @@
 package com.bank.cashapp.service;
 
 import com.bank.cashapp.client.AccountClient;
-import com.bank.cashapp.client.NotificationClient;
 import com.bank.cashapp.dto.*;
+import com.bank.cashapp.kafka.producer.NotificationProducer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,7 +28,7 @@ public class CashServiceTest {
     private AccountClient accountClient;
 
     @Mock
-    private NotificationClient notificationClient;
+    private NotificationProducer notificationProducer;
 
     @Test
     void shouldEditCashSuccessfully() {
@@ -50,7 +50,7 @@ public class CashServiceTest {
         assertThat(result).isEqualTo(accountResponse);
         verify(accountClient).getAccountIdByUserName(username);
         verify(accountClient).editCash(any(AccountIdEditCashRequestDto.class));
-        verify(notificationClient).sendEditCashNotification(any());
+        verify(notificationProducer).sendEditCashNotification(any());
     }
 
     @Test
@@ -63,6 +63,6 @@ public class CashServiceTest {
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("Сумма должна быть больше 0");
         verifyNoInteractions(accountClient);
-        verifyNoInteractions(notificationClient);
+        verifyNoInteractions(notificationProducer);
     }
 }

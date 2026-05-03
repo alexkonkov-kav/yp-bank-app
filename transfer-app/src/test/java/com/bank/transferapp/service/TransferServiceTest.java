@@ -1,11 +1,11 @@
 package com.bank.transferapp.service;
 
 import com.bank.transferapp.client.AccountClient;
-import com.bank.transferapp.client.NotificationClient;
 import com.bank.transferapp.dto.AccountIdResponseDto;
 import com.bank.transferapp.dto.AccountResponseDto;
 import com.bank.transferapp.dto.AccountsTransferRequestDto;
 import com.bank.transferapp.dto.TransferRequestDto;
+import com.bank.transferapp.kafka.producer.NotificationProducer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,7 +31,7 @@ public class TransferServiceTest {
     private AccountClient accountClient;
 
     @Mock
-    private NotificationClient notificationClient;
+    private NotificationProducer notificationProducer;
 
     @Test
     void shouldTransferSuccessfully() {
@@ -55,7 +55,7 @@ public class TransferServiceTest {
         verify(accountClient).getAccountIdByUserName(username);
         verify(accountClient).getAccountIdByUserName(request.getLogin());
         verify(accountClient).transfer(any(AccountsTransferRequestDto.class));
-        verify(notificationClient).sendTransferNotification(any());
+        verify(notificationProducer).sendTransferNotification(any());
     }
 
     @Test
@@ -68,6 +68,6 @@ public class TransferServiceTest {
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("Сумма должна быть больше 0");
         verifyNoInteractions(accountClient);
-        verifyNoInteractions(notificationClient);
+        verifyNoInteractions(notificationProducer);
     }
 }

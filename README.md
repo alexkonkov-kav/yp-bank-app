@@ -6,15 +6,14 @@
 - проверку прав пользователя и сервисов на основе ролей realm_access;
 - вызовы между микросервисами через Client Credentials Flow;
 - разделение ответственности между **UI, Gateway, микросервисов и Kubernetes**;
+- взаимодействие notification сервиса через kafka;
 - Развёртывание в Kubernetes с помощью Helm и с использованием ConfigMap, Secrets, сервис NodePort.
 
 ---
 
 ## Что изменилось
 
-- **Удален Consul как Gateway, Discovery, Config**
-- **Добавлено развертывание в Kubernetes с помощью Helm**
-- **Добавлены Kubernetes ConfigMaps, NodePort и Secrets**
+- **Добавлено взаимодействие с сервисом notification через брокер Kafka**
 
 ---
 
@@ -29,6 +28,7 @@
 - Сервис уведомлений (Notifications) - отправляет уведомления о выполненном действии: переводе денег, пополнении счёта, снятии денег со счёта и т. д.;
 - Единая база данных с разными схемами для каждого микросервиса;
 - Используют единый стек технологий (Spring Boot + PostgreSQL);
+- Используют брокер Kafka для асинхронного взаимодействия;
 - Фронт (Front UI), Spring Gateway, Keycloak находятся снаружи Kubernetes-кластера;
 - Микросервис аккаунтов (Account), Микросервис обналичивания денег (Cash), Сервис перевода денег между счетами (Transfer), Сервис уведомлений (Notifications) и БД Postgres находятся внутри Kubernetes-кластера отдельными Helm-чартами;
 - Развёртывание в Kubernetes с помощью Helm-чарта зонтичного проекта и Helm-сабчарта для каждого микросервиса.
@@ -51,6 +51,8 @@
     - пакет `service` — unit тесты сервиса и тест Redis Cache сервиса
     - пакет `controller` и `repository` — интеграционные и WebMvc тесты контроллера и репозитория
     - реализованы контракт тесты
+
+- **Kafka** для асинхронного взаимодействия
   
 - **Kubernetes** для развертывания с помощью `Helm`-чарта зонтичного типа
 
@@ -58,7 +60,9 @@
 
 ## Запуск приложения
 
-- **Создать в корне проекта файл .env:** с указанием `DB_HOST, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_PORT, ACCOUNT_DB_SCHEMA, CASH_DB_SCHEMA, TRANSFER_DB_SCHEMA, NOTIFICATION_DB_SCHEMA, CONSUL_PORT, KEYCLOAK_PORT, KEYCLOAK_ADMIN, KEYCLOAK_ADMIN_PASSWORD, KEYCLOAK_URL, FRONT_PORT, ACCOUNT_PORT, CASH_PORT, TRANSFER_PORT, NOTIFICATION_PORT, GATEWAY_PORT=8086`
+- **Добавить репозиторий чарта Apache Kafka:** `helm install kafka kafka-repo/kafka`
+
+- **Установите релиз Kafka в Kubernetes:** `helm install kafka kafka-repo/kafka`
 
 - **Запуск:** Собрать все образы с тегами (пример: yp-bank-app-account-app), создать неймспейс и установить релиз
 

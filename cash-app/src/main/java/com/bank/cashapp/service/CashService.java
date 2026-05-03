@@ -1,8 +1,8 @@
 package com.bank.cashapp.service;
 
 import com.bank.cashapp.client.AccountClient;
-import com.bank.cashapp.client.NotificationClient;
 import com.bank.cashapp.dto.*;
+import com.bank.cashapp.kafka.producer.NotificationProducer;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -11,12 +11,12 @@ import org.springframework.web.server.ResponseStatusException;
 public class CashService {
 
     private final AccountClient accountClient;
-    private final NotificationClient notificationClient;
+    private final NotificationProducer notificationProducer;
 
     public CashService(AccountClient accountClient,
-                       NotificationClient notificationClient) {
+                       NotificationProducer notificationProducer) {
         this.accountClient = accountClient;
-        this.notificationClient = notificationClient;
+        this.notificationProducer = notificationProducer;
     }
 
     public AccountResponseDto editCash(String username, EditCashRequestDto requestDto) {
@@ -26,7 +26,7 @@ public class CashService {
         AccountIdResponseDto accountIdDto = accountClient.getAccountIdByUserName(username);
         AccountResponseDto accountDto = accountClient.editCash(
                 new AccountIdEditCashRequestDto(accountIdDto.id(), requestDto.getValue(), requestDto.getAction()));
-        notificationClient.sendEditCashNotification(getNotificationRequestDto(username, accountDto, requestDto));
+        notificationProducer.sendEditCashNotification(getNotificationRequestDto(username, accountDto, requestDto));
         return accountDto;
     }
 
